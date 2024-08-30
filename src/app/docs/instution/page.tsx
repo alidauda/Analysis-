@@ -226,7 +226,6 @@ export default function Page() {
                           <PaginationPrevious
                             href="#"
                             onClick={() => paginate(currentPage - 1)}
-                            disabled={currentPage === 1}
                           />
                         </PaginationItem>
                         {Array.from(
@@ -261,14 +260,6 @@ export default function Page() {
                           <PaginationNext
                             href="#"
                             onClick={() => paginate(currentPage + 1)}
-                            disabled={
-                              currentPage ===
-                              Math.ceil(
-                                Object.keys(
-                                  data?.sortedInstitutionsObject || {}
-                                ).length / itemsPerPage
-                              )
-                            }
                           />
                         </PaginationItem>
                       </PaginationContent>
