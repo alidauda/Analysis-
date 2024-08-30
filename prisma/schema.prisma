@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Data {
+  id              Int    @id @default(autoincrement())
+  INSTITUTION     String
+  InstitutionType String
+  COURSE          String
+  AdmissionYear   String
+  Abia            String
+  Adamawa         String
+  AkwaIbom        String
+  Anambra         String
+  Bauchi          String
+  Bayelsa         String
+  Benue           String
+  Borno           String
+  CrossRiver      String
+  Delta           String
+  Ebonyi          String
+  Edo             String
+  Ekiti           String
+  Enugu           String
+  Gombe           String
+  Imo             String
+  Jigawa          String
+  Kaduna          String
+  Kano            String
+  Katsina         String
+  Kebbi           String
+  Kogi            String
+  Kwara           String
+  Lagos           String
+  Nasarawa        String
+  Niger           String
+  Ogun            String
+  Ondo            String
+  Osun            String
+  Oyo             String
+  Plateau         String
+  Rivers          String
+  Sokoto          String
+  Taraba          String
+  Yobe            String
+  Zamfara         String
+  FCT             String
+  Foreign         String
+  CourseTotal     String
+}
