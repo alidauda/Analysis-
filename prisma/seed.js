@@ -15,14 +15,15 @@ async function seedDatabase() {
         .on("error", (error) => reject(error));
     });
     const len = results.length;
-    const batch = 500;
+    const batch = 50;
     const numberOfBatches = Math.ceil(len / batch);
     for (let i = 0; i < numberOfBatches; i++) {
       const start = i * batch;
       const end = Math.min(len, (i + 1) * batch);
       const data = results.slice(start, end);
+      console.log(`Processing batch ${i + 1} of ${numberOfBatches}`);
       await prisma.data.createMany({
-        data: results.map((item) => {
+        data: data.map((item) => {
           const trimmedItem = {
             ...item,
             INSTITUTION: item.INSTITUTION.trim().replace(/\s+/g, " "),
@@ -33,6 +34,7 @@ async function seedDatabase() {
           return trimmedItem;
         }),
       });
+      console.log(`Batch ${i + 1} processed successfully.`);
     }
     // await prisma.data.createMany({
     //   data: results.map((item) => {
