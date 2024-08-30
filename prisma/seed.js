@@ -22,7 +22,7 @@ async function seedDatabase() {
       const end = Math.min(len, (i + 1) * batch);
       const data = results.slice(start, end);
       await prisma.data.createMany({
-        data: data.map((item) => {
+        data: results.map((item) => {
           const trimmedItem = {
             ...item,
             INSTITUTION: item.INSTITUTION.trim().replace(/\s+/g, " "),
