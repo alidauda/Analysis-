@@ -21,3 +21,7 @@
 
 //   return Response.json(data);
 // }
+
+export async function POST(req: Request) {
+  return Response.json({ message: "Hello World" });
+}
