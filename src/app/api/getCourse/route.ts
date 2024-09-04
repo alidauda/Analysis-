@@ -3,111 +3,105 @@ import prisma from "@/utlis/db";
 import { type NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
-  // const searchParams = req.nextUrl.searchParams;
-  // const value = searchParams.get("yearC");
-  // const institutionType = searchParams.get("institutionTypeC");
-  // const stateParam = searchParams.get("stateC");
-  // const year = JSON.parse(value!) as string[];
-  // const state = JSON.parse(stateParam!) as string[];
-  // const inType = JSON.parse(institutionType!) as string[];
+  const searchParams = req.nextUrl.searchParams;
+  const yearParam = searchParams.get("yearC");
+  const institutionTypeParam = searchParams.get("institutionTypeC");
+  const stateParam = searchParams.get("stateC");
 
-  // const totalInstutions: { [key: string]: number } = {};
-  // let [data, courseTotal] = await prisma.$transaction([
-  //   prisma.data.findMany({
-  //     orderBy: {
-  //       INSTITUTION: "asc",
-  //     },
-  //     select: {
-  //       Abia: true,
-  //       Adamawa: true,
-  //       AkwaIbom: true,
-  //       Anambra: true,
-  //       Bauchi: true,
-  //       Bayelsa: true,
-  //       Benue: true,
-  //       Borno: true,
-  //       CrossRiver: true,
-  //       Delta: true,
-  //       Ebonyi: true,
-  //       Edo: true,
-  //       Ekiti: true,
-  //       Enugu: true,
-  //       Gombe: true,
-  //       Imo: true,
-  //       Jigawa: true,
-  //       Kaduna: true,
-  //       Kano: true,
-  //       Katsina: true,
-  //       Kebbi: true,
-  //       Kogi: true,
-  //       Kwara: true,
-  //       Lagos: true,
-  //       Nasarawa: true,
-  //       Niger: true,
-  //       Ogun: true,
-  //       Ondo: true,
-  //       Osun: true,
-  //       Oyo: true,
-  //       Plateau: true,
-  //       Rivers: true,
-  //       Sokoto: true,
-  //       Taraba: true,
-  //       Yobe: true,
-  //       Zamfara: true,
-  //       FCT: true,
-  //       Foreign: true,
-  //       AdmissionYear: true,
-  //       CourseTotal: true,
-  //       COURSE: true,
-  //       INSTITUTION: true,
-  //       InstitutionType: true,
-  //     },
-  //   }),
-  //   prisma.data.findMany({
-  //     distinct: ["COURSE"],
-  //   }),
-  // ]);
+  const years = yearParam ? (JSON.parse(yearParam) as string[]) : [];
+  const institutionTypes = institutionTypeParam
+    ? (JSON.parse(institutionTypeParam) as string[])
+    : [];
+  const states = stateParam ? (JSON.parse(stateParam) as string[]) : [];
 
-  // if (year.length > 0) {
-  //   data = data.filter((item) => year.includes(item.AdmissionYear));
-  // }
-  // if (inType.length > 0) {
-  //   data = data.filter((item) => inType.includes(item.InstitutionType));
-  // }
+  const [totalInstutions, totalInstutionsC, numberInstutionC] =
+    await Promise.all([
+      getTotalInstutions(years, institutionTypes, states),
+      getTotalInstutionsByType(years, institutionTypes, states),
+      getNumberOfInstutions(years, institutionTypes, states),
+    ]);
 
-  // const numberInstutionC = courseTotal.length;
+  const sortedObjectC = sortObj(totalInstutions);
 
-  // let totalInstutionsC = ["university", "college", "polytechnic"].map(
-  //   (item) => ({
-  //     institutionType: item,
-  //     data: courseTotal.filter((uni) => uni.InstitutionType === item).length,
-  //   })
-  // );
-  // data.forEach((item) => {
-  //   if (totalInstutions[item.COURSE]) {
-  //     totalInstutions[item.COURSE] += parseInt(
-  //       state.length > 0 ? getTotal(item, state) : "0"
-  //     );
-  //   } else {
-  //     totalInstutions[item.COURSE] = parseInt(
-  //       state.length > 0 ? getTotal(item, state) : "0"
-  //     );
-  //   }
-  // });
-  // const sortedObjectC = sortObj(totalInstutions);
-  // return Response.json({
-  //   sortedObjectC,
-  //   totalInstutionsC,
-  //   numberInstutionC,
-  // });
-  return Response.json({ message: "data not" });
+  return Response.json({
+    sortedObjectC,
+    totalInstutionsC,
+    numberInstutionC,
+  });
 }
 
-function getTotal(item: { [key: string]: string }, state: string[]) {
-  let total = 0;
-  for (let i of state) {
-    total += parseInt(item[i]);
-  }
+async function getTotalInstutions(
+  years: string[],
+  institutionTypes: string[],
+  states: string[]
+) {
+  const totalInstutions: { [key: string]: number } = {};
 
-  return total.toString();
+  const data = await prisma.data.findMany({
+    where: {
+      AdmissionYear: years.length > 0 ? { in: years } : undefined,
+      InstitutionType:
+        institutionTypes.length > 0 ? { in: institutionTypes } : undefined,
+    },
+    select: {
+      COURSE: true,
+      ...Object.fromEntries(states.map((state) => [state, true])),
+    },
+  });
+
+  data.forEach((item: { [key: string]: string }) => {
+    const stateTotal = states.reduce(
+      (total, state) => total + (parseInt(item[state] || "0") || 0),
+      0
+    );
+    if (totalInstutions[item.COURSE]) {
+      totalInstutions[item.COURSE] += stateTotal;
+    } else {
+      totalInstutions[item.COURSE] = stateTotal;
+    }
+  });
+
+  return totalInstutions;
+}
+
+async function getTotalInstutionsByType(
+  years: string[],
+  institutionTypes: string[],
+  states: string[]
+) {
+  const results = await prisma.data.groupBy({
+    by: ["InstitutionType"],
+    where: {
+      AdmissionYear: years.length > 0 ? { in: years } : undefined,
+      InstitutionType:
+        institutionTypes.length > 0 ? { in: institutionTypes } : undefined,
+    },
+    _count: {
+      INSTITUTION: true,
+    },
+  });
+
+  return results.map(({ InstitutionType, _count }) => ({
+    institutionType: InstitutionType,
+    data: _count.INSTITUTION,
+  }));
+}
+
+async function getNumberOfInstutions(
+  years: string[],
+  institutionTypes: string[],
+  states: string[]
+) {
+  const result = await prisma.data.aggregate({
+    _count: {
+      INSTITUTION: true,
+    },
+    where: {
+      AdmissionYear: years.length > 0 ? { in: years } : undefined,
+      InstitutionType:
+        institutionTypes.length > 0 ? { in: institutionTypes } : undefined,
+    },
+  });
+
+  return result._count.INSTITUTION;
 }

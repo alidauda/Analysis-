@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 </svg>
                 Dashboard
               </Link>
-              <Link
+              {/* <Link
                 className={`flex items-center gap-3 rounded-lg ${
                   pathname === "/docs/instution" && "bg-gray-100"
                 } px-3 py-2 text-gray-900  transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50`}
@@ -86,7 +86,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                   <circle cx="12" cy="9" r="2" />
                 </svg>
                 Insutution
-              </Link>
+              </Link> */}
               <Link
                 className={`flex items-center gap-3 rounded-lg ${
                   pathname === "/docs/courses" && "bg-gray-100"

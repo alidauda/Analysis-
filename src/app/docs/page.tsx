@@ -90,14 +90,14 @@ export default function Component() {
               />
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle className="text-center">
                 Total Admission For Each Insutition
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {/* <Bar
+              <Bar
                 options={{
                   responsive: true,
                   plugins: {
@@ -107,17 +107,17 @@ export default function Component() {
                   },
                 }}
                 data={{
-                  labels: Object.keys(data!.forAllinstu[0].data),
-                  datasets: institutionType.map((item, index) => ({
-                    data: Object.values(data!.forAllinstu[index].data),
+                  labels: Object.keys(data!.institutionData[0].institutionType),
+                  datasets: data.map((item, index) => ({
+                    data: Object.values(data!.institutionData[index].data),
                     label: item.type,
                     borderColor: item.borderColor,
                     backgroundColor: item.backgroundColor,
                   })),
                 }}
-              /> */}
+              />
             </CardContent>
-          </Card>
+          </Card> */}
           <div className="grid grid-cols-2 gap-3">
             <Card>
               <CardHeader>
