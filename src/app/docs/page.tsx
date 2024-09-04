@@ -97,7 +97,7 @@ export default function Component() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Bar
+              {/* <Bar
                 options={{
                   responsive: true,
                   plugins: {
@@ -115,7 +115,7 @@ export default function Component() {
                     backgroundColor: item.backgroundColor,
                   })),
                 }}
-              />
+              /> */}
             </CardContent>
           </Card>
           <div className="grid grid-cols-2 gap-3">
@@ -152,10 +152,10 @@ export default function Component() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <PieChart
+                {/* <PieChart
                   data={Object.values(data!.totoalsByYearForForeignStudent)}
                   label={Object.keys(data!.totoalsByYearForForeignStudent)}
-                />
+                /> */}
               </CardContent>
             </Card>
             <Card>
@@ -165,10 +165,10 @@ export default function Component() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <PieChart
+                {/* <PieChart
                   data={Object.values(data!.totalsByInstutionType)}
                   label={Object.keys(data!.totalsByInstutionType)}
-                />
+                /> */}
               </CardContent>
             </Card>
           </div>
