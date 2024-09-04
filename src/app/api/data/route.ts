@@ -1,5 +1,6 @@
+import { NextRequest } from "next/server";
 import prisma from "@/utlis/db";
-import { NextResponse, type NextRequest } from "next/server";
+
 const geopoliticalZones = [
   {
     zone: "North Central",
@@ -31,154 +32,157 @@ const geopoliticalZones = [
     states: ["Ekiti", "Lagos", "Ogun", "Ondo", "Osun", "Oyo"],
   },
 ];
-interface RegionTotals {
-  [region: string]: number;
-}
-interface StateValues {
-  [key: string]: string;
-}
 
-interface StateSums {
-  [key: string]: number;
-}
+const stateColumns = [
+  "Abia",
+  "Adamawa",
+  "AkwaIbom",
+  "Anambra",
+  "Bauchi",
+  "Bayelsa",
+  "Benue",
+  "Borno",
+  "CrossRiver",
+  "Delta",
+  "Ebonyi",
+  "Edo",
+  "Ekiti",
+  "Enugu",
+  "Gombe",
+  "Imo",
+  "Jigawa",
+  "Kaduna",
+  "Kano",
+  "Katsina",
+  "Kebbi",
+  "Kogi",
+  "Kwara",
+  "Lagos",
+  "Nasarawa",
+  "Niger",
+  "Ogun",
+  "Ondo",
+  "Osun",
+  "Oyo",
+  "Plateau",
+  "Rivers",
+  "Sokoto",
+  "Taraba",
+  "Yobe",
+  "Zamfara",
+  "FCT",
+];
+
 export async function GET(req: NextRequest) {
-  return NextResponse.json({ message: "Hello World" });
-  // const searchParams = req.nextUrl.searchParams;
-  // const query = searchParams.get("query");
-  // const regionTotals: RegionTotals = {};
-  // const totalsByYear: { [key: string]: number } = {};
-  // const totoalsByYearForForeignStudent: { [key: string]: number } = {};
-  // const totalsByInstutionType: { [key: string]: number } = {};
+  const searchParams = req.nextUrl.searchParams;
+  const query = searchParams.get("query");
 
-  // let data = await prisma.data.findMany({
-  //   orderBy: {
-  //     AdmissionYear: "asc",
-  //   },
-  // });
-  // if (query && query.trim() !== "") {
-  //   data = data.filter((item) => item.AdmissionYear === query.trim());
-  // }
-
-  // const stateValues = data.map(
-  //   ({
-  //     CourseTotal,
-  //     INSTITUTION,
-  //     InstitutionType,
-  //     AdmissionYear,
-  //     id,
-  //     Foreign,
-  //     COURSE,
-  //     ...rest
-  //   }) => rest
-  // );
-  // const stateSums = computeStateSums(stateValues);
-  // const forAllinstu = ["university", "college", "polytechnic"].map((item) => ({
-  //   type: item,
-  //   data: computeStateSums(
-  //     data
-  //       .filter((insuType) => insuType.InstitutionType === item)
-  //       .map(
-  //         ({
-  //           CourseTotal,
-  //           INSTITUTION,
-  //           InstitutionType,
-  //           AdmissionYear,
-  //           id,
-  //           Foreign,
-  //           COURSE,
-  //           ...rest
-  //         }) => rest
-  //       )
-  //   ),
-  // }));
-  // let totalAdmission = getTotal(
-  //   data.map((item) => {
-  //     return item.CourseTotal;
-  //   })
-  // );
-  // let totalUniversityAdmission = getTotal(
-  //   data
-  //     .filter((item) => item.InstitutionType === "university")
-  //     .map((item) => item.CourseTotal)
-  // );
-  // let totalCollegeAdmission = getTotal(
-  //   data
-  //     .filter((item) => item.InstitutionType === "college")
-  //     .map((item) => item.CourseTotal)
-  // );
-  // let totalPolytenicAdmission = getTotal(
-  //   data
-  //     .filter((item) => item.InstitutionType === "polytechnic")
-  //     .map((item) => item.CourseTotal)
-  // );
-
-  // data.forEach((item) => {
-  //   if (totalsByYear[item.AdmissionYear]) {
-  //     totalsByYear[item.AdmissionYear] += parseInt(item.CourseTotal);
-  //   } else {
-  //     totalsByYear[item.AdmissionYear] = parseInt(item.CourseTotal);
-  //   }
-  // });
-  // data.forEach((item) => {
-  //   if (totalsByInstutionType[item.InstitutionType]) {
-  //     totalsByInstutionType[item.InstitutionType] += parseInt(item.CourseTotal);
-  //   } else {
-  //     totalsByInstutionType[item.InstitutionType] = parseInt(item.CourseTotal);
-  //   }
-  // });
-  // data.forEach((item) => {
-  //   if (totoalsByYearForForeignStudent[item.AdmissionYear]) {
-  //     totoalsByYearForForeignStudent[item.AdmissionYear] += parseInt(
-  //       item.Foreign
-  //     );
-  //   } else {
-  //     totoalsByYearForForeignStudent[item.AdmissionYear] = parseInt(
-  //       item.Foreign
-  //     );
-  //   }
-  // });
-  // for (let i = 0; i < stateValues.length; i++) {
-  //   for (const [state, population] of Object.entries(stateValues[i]!)) {
-  //     for (const zone of geopoliticalZones) {
-  //       if (zone.states.includes(state)) {
-  //         regionTotals[zone.zone] =
-  //           (regionTotals[zone.zone] || 0) + parseInt(population);
-  //       }
-  //     }
-  //   }
-  // }
-  // return Response.json({
-  //   totalAdmission,
-  //   regionTotals,
-  //   stateSums,
-  //   institutionData: [
-  //     { institutionType: "university", data: totalUniversityAdmission },
-  //     { institutionType: "college", data: totalCollegeAdmission },
-  //     { institutionType: "poly", data: totalPolytenicAdmission },
-  //   ],
-  //   totalsByYear,
-  //   totoalsByYearForForeignStudent,
-  //   forAllinstu,
-  //   totalsByInstutionType,
-  // });
-}
-
-function computeStateSums(stateValues: StateValues[]): StateSums {
-  const stateSums: StateSums = {};
-
-  for (const stateObj of stateValues) {
-    for (const [state, value] of Object.entries(stateObj)) {
-      stateSums[state] = (stateSums[state] || 0) + parseInt(value);
-    }
+  let whereClause = {};
+  if (query && query.trim() !== "") {
+    whereClause = { AdmissionYear: query.trim() };
   }
 
-  return stateSums;
+  const [
+    totalAdmission,
+    totalsByYear,
+    totalsByInstitutionType,
+    totalsByYearForForeignStudent,
+    stateSums,
+    institutionData,
+  ] = await Promise.all([
+    getTotalAdmission(whereClause),
+    getTotalsByYear(whereClause),
+    getTotalsByInstitutionType(whereClause),
+    getTotalsByYearForForeignStudent(whereClause),
+    getStateSums(whereClause),
+    getInstitutionData(whereClause),
+  ]);
+
+  const regionTotals = computeRegionTotals(stateSums);
+
+  return Response.json({
+    totalAdmission,
+    regionTotals,
+    stateSums,
+    institutionData,
+    totalsByYear,
+    totalsByYearForForeignStudent,
+    totalsByInstitutionType,
+  });
 }
 
-function getTotal(data: string[]) {
-  let total = 0;
-  for (let i = 0; i < data.length; i++) {
-    total += parseInt(data[i]);
-  }
-  return total;
+async function getTotalAdmission(whereClause: any) {
+  const result = await prisma.data.aggregate({
+    _sum: { CourseTotal: true },
+    where: whereClause,
+  });
+  return result._sum.CourseTotal || 0;
+}
+
+async function getTotalsByYear(whereClause: any) {
+  const results = await prisma.data.groupBy({
+    by: ["AdmissionYear"],
+
+    _sum: { CourseTotal: true },
+    where: whereClause,
+    orderBy: { AdmissionYear: "asc" },
+  });
+  return Object.fromEntries(
+    results.map((r) => [r.AdmissionYear, r._sum.CourseTotal || 0])
+  );
+}
+
+async function getTotalsByInstitutionType(whereClause: any) {
+  const results = await prisma.data.groupBy({
+    by: ["InstitutionType"],
+    _sum: { CourseTotal: true },
+    where: whereClause,
+  });
+  return Object.fromEntries(
+    results.map((r) => [r.InstitutionType, r._sum.CourseTotal || 0])
+  );
+}
+
+async function getTotalsByYearForForeignStudent(whereClause: any) {
+  const results = await prisma.data.groupBy({
+    by: ["AdmissionYear"],
+    _sum: { Foreign: true },
+    where: whereClause,
+    orderBy: { AdmissionYear: "asc" },
+  });
+  return Object.fromEntries(
+    results.map((r) => [r.AdmissionYear, r._sum.Foreign || 0])
+  );
+}
+
+async function getStateSums(whereClause: any) {
+  const result = await prisma.data.aggregate({
+    _sum: Object.fromEntries(stateColumns.map((state) => [state, true])),
+    where: whereClause,
+  });
+  return result._sum as Record<string, number>;
+}
+
+async function getInstitutionData(whereClause: any) {
+  const types = ["university", "college", "polytechnic"];
+  const results = await Promise.all(
+    types.map(async (type) => {
+      const result = await prisma.data.aggregate({
+        _sum: { CourseTotal: true },
+        where: { ...whereClause, InstitutionType: type },
+      });
+      return { institutionType: type, data: result._sum.CourseTotal || 0 };
+    })
+  );
+  return results;
+}
+
+function computeRegionTotals(stateSums: Record<string, number>) {
+  return geopoliticalZones.reduce((acc, zone) => {
+    acc[zone.zone] = zone.states.reduce(
+      (sum, state) => sum + (stateSums[state] || 0),
+      0
+    );
+    return acc;
+  }, {} as Record<string, number>);
 }
